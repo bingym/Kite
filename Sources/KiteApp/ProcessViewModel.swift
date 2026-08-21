@@ -1,5 +1,5 @@
 import Foundation
-import SwiftActivityCore
+import KiteCore
 
 enum ProcessSort: String, CaseIterable, Identifiable {
     case cpu

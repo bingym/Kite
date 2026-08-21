@@ -1,5 +1,5 @@
 import Foundation
-import SwiftActivityCore
+import KiteCore
 
 let processes = try MacOSProcessProvider().snapshot().sorted { $0.residentMemory > $1.residentMemory }
 print("PID\tMEMORY\tNAME")

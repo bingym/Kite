@@ -2,18 +2,18 @@
 import PackageDescription
 
 let package = Package(
-    name: "SwiftGo",
+    name: "Kite",
     platforms: [.macOS(.v13)],
     products: [
-        .library(name: "SwiftActivityCore", targets: ["SwiftActivityCore"]),
-        .executable(name: "SwiftGo", targets: ["SwiftActivityApp"]),
-        .executable(name: "swift-activity", targets: ["SwiftActivityCLI"]),
-        .executable(name: "swift-activity-self-test", targets: ["SwiftActivitySelfTest"])
+        .library(name: "KiteCore", targets: ["KiteCore"]),
+        .executable(name: "Kite", targets: ["KiteApp"]),
+        .executable(name: "kite-cli", targets: ["KiteCLI"]),
+        .executable(name: "kite-self-test", targets: ["KiteSelfTest"])
     ],
     targets: [
-        .target(name: "SwiftActivityCore"),
-        .executableTarget(name: "SwiftActivityApp", dependencies: ["SwiftActivityCore"]),
-        .executableTarget(name: "SwiftActivityCLI", dependencies: ["SwiftActivityCore"]),
-        .executableTarget(name: "SwiftActivitySelfTest", dependencies: ["SwiftActivityCore"])
+        .target(name: "KiteCore"),
+        .executableTarget(name: "KiteApp", dependencies: ["KiteCore"]),
+        .executableTarget(name: "KiteCLI", dependencies: ["KiteCore"]),
+        .executableTarget(name: "KiteSelfTest", dependencies: ["KiteCore"])
     ]
 )

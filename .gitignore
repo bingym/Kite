@@ -23,6 +23,7 @@ xcuserdata/
 !default.perspectivev3
 
 # App packaging / debug symbols
+dist/
 *.ipa
 *.dSYM
 *.dSYM.zip

@@ -1,5 +1,5 @@
 import SwiftUI
-import SwiftActivityCore
+import KiteCore
 
 struct PerformanceView: View {
     private enum Metric: String, CaseIterable, Identifiable {

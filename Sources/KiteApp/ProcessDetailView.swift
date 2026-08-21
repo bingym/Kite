@@ -1,5 +1,5 @@
 import SwiftUI
-import SwiftActivityCore
+import KiteCore
 
 struct ProcessDetailView: View {
     let process: ProcessSnapshot

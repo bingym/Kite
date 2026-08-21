@@ -1,5 +1,5 @@
 import Foundation
-import SwiftActivityCore
+import KiteCore
 
 let sample = ProcessSnapshot(id: 42, name: "Example", parentID: 1, residentMemory: 1024, cpuPercent: 12.5)
 precondition(sample.id == 42)

@@ -1,6 +1,6 @@
 import AppKit
 import SwiftUI
-import SwiftActivityCore
+import KiteCore
 
 struct ContentView: View {
     private enum Section: String, CaseIterable, Identifiable {
@@ -52,9 +52,9 @@ struct ContentView: View {
 
     private var appHeader: some View {
         HStack(spacing: 14) {
-            SwiftGoMark().frame(width: 36, height: 36)
+            KiteMark().frame(width: 36, height: 36)
             VStack(alignment: .leading, spacing: 0) {
-                Text("SwiftGo").font(.headline)
+            Text("Kite").font(.headline)
                 Text(section == .processes ? "All Processes" : "System Performance")
                     .font(.caption).foregroundStyle(.secondary)
             }
@@ -305,7 +305,7 @@ struct ContentView: View {
     }
 }
 
-private struct SwiftGoMark: View {
+private struct KiteMark: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 9)

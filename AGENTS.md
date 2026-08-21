@@ -1,19 +1,20 @@
-# SwiftGo Agent Guide
+# Kite Agent Guide
 
 ## Project scope
 
-SwiftGo is a macOS 13+ SwiftUI process monitor built as a Swift Package.
-The GUI product is `SwiftGo`; `swift-activity` is the CLI and
-`swift-activity-self-test` is the local integration check.
+Kite is a macOS 13+ SwiftUI process monitor built as a Swift Package.
+The GUI product is `Kite`; `kite-cli` is the CLI and
+`kite-self-test` is the local integration check. The product and all internal
+targets use the Kite name; do not reintroduce the former Swift-based names.
 
 ## Architecture
 
-- `Sources/SwiftActivityCore`: process enumeration, CPU sampling, process
+- `Sources/KiteCore`: process enumeration, CPU sampling, process
   signals, and host memory statistics. Keep this target independent of SwiftUI.
-- `Sources/SwiftActivityApp`: the English-language macOS GUI. Potentially
+- `Sources/KiteApp`: the English-language macOS GUI. Potentially
   blocking system calls belong behind `ProcessService`, not on the main actor.
-- `Sources/SwiftActivityCLI`: small command-line view of the process provider.
-- `Sources/SwiftActivitySelfTest`: assertions and live provider smoke tests.
+- `Sources/KiteCLI`: small command-line view of the process provider.
+- `Sources/KiteSelfTest`: assertions and live provider smoke tests.
 
 The process provider must retain every PID returned by `proc_listallpids`, even
 when macOS denies detailed information. Missing fields should degrade to safe
@@ -46,12 +47,26 @@ Run these after relevant changes:
 
 ```sh
 swift build
-swift run swift-activity-self-test
-swift build -c release --product SwiftGo
+swift run kite-self-test
+swift build -c release --product Kite
+./scripts/package-app.sh
 ```
 
-For GUI changes, launch `.build/debug/SwiftGo`, verify that it remains
+For GUI changes, launch `.build/debug/Kite`, verify that it remains
 running, presents a foreground window, and emits no startup warnings.
+The distribution artifact is `dist/Kite.app`; set `CODE_SIGN_IDENTITY` when
+an ad-hoc or developer signature is required.
+
+`scripts/package-app.sh` creates the macOS app bundle and generates
+`AppIcon.icns` at packaging time from `Resources/AppIcon.svg` using the native
+Core Graphics generator in `scripts/generate-app-icon.swift`. Do not commit a
+generated `.icns` file to `Resources`; the source SVG and generator are the
+maintained icon assets.
+
+The bundle currently uses identifier `com.kite.monitor`, version `1.0.0`, and
+requires macOS 13 or later. `VERSION`, `BUNDLE_ID`, `OUTPUT_DIR`, and
+`CODE_SIGN_IDENTITY` can be provided as environment variables to the packaging
+script.
 
 ## Keep this file current
 
