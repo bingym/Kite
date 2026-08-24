@@ -137,7 +137,7 @@ struct ContentView: View {
                         if alignment != .trailing { Spacer(minLength: 0) }
                     }
                     .contentShape(Rectangle())
-                    .frame(width: width, alignment: alignment)
+                        .frame(width: width, alignment: alignment)
                     .onTapGesture { model.selectSort(sort) }
                     .accessibilityAddTraits(.isButton)
                     .accessibilityLabel("Sort by \(title)")
@@ -181,6 +181,7 @@ struct ContentView: View {
         }
     }
 
+
     @ViewBuilder
     private func processColumn(_ column: String, row: ProcessTreeRow) -> some View {
         let process = row.process
@@ -219,6 +220,8 @@ struct ContentView: View {
         case "CPU":
             Text(process.cpuPercent, format: .number.precision(.fractionLength(1))) + Text("%")
         case "Memory":
+            Text(ByteCountFormatter.string(fromByteCount: Int64(clamping: process.memoryFootprint), countStyle: .memory))
+        case "Resident":
             Text(ByteCountFormatter.string(fromByteCount: Int64(clamping: process.residentMemory), countStyle: .memory))
         case "Threads":
             Text(process.threadCount, format: .number)
@@ -264,6 +267,7 @@ struct ContentView: View {
         case "PID": .pid
         case "CPU": .cpu
         case "Memory": .memory
+        case "Resident": .memory
         case "Threads": .threads
         case "User": .user
         default: nil
@@ -327,22 +331,23 @@ private struct KiteMark: View {
 
 private struct ProcessColumns<Content: View>: View {
     let content: (String, CGFloat?, Alignment) -> Content
-
     init(@ViewBuilder content: @escaping (String, CGFloat?, Alignment) -> Content) {
         self.content = content
     }
 
     var body: some View {
         HStack(spacing: 12) {
-            content("Process Name", nil, .leading)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            content("Process Name", nil, .leading).frame(maxWidth: .infinity, alignment: .leading)
             content("PID", 60, .trailing)
             content("CPU", 70, .trailing)
             content("Memory", 90, .trailing)
+            content("Resident", 90, .trailing)
             content("Threads", 58, .trailing)
             content("User", 104, .leading)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
+
 }
 
 private struct ProcessIcon: View {

@@ -29,6 +29,7 @@ struct ProcessDetailView: View {
                 Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 11) {
                     detailRow("CPU", value: process.cpuPercent.formatted(.number.precision(.fractionLength(1))) + "%")
                     detailRow("Resident Memory", value: bytes(process.residentMemory))
+                    detailRow("Memory Footprint", value: bytes(process.memoryFootprint))
                     detailRow("Virtual Memory", value: bytes(process.virtualMemory))
                     detailRow("Threads", value: process.threadCount.formatted())
                     detailRow("Parent PID", value: process.parentID.formatted(.number.grouping(.never)))

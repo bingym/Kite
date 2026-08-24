@@ -10,9 +10,7 @@ precondition(sample.cpuPercent == 12.5)
 
 let processes = try MacOSProcessProvider().snapshot()
 precondition(!processes.isEmpty, "The process provider returned no processes")
-precondition(processes.contains(where: { $0.id == 0 }), "The kernel task is missing")
-precondition(processes.contains(where: { $0.name == "kernel_task" }), "kernel_task is missing by name")
-precondition(processes.first(where: { $0.id == 0 })?.residentMemory ?? 0 > 0, "kernel_task memory is missing")
+precondition(processes.contains(where: { $0.id == 0 }), "The process provider must retain PID 0")
 precondition(processes.contains(where: { $0.name == "WindowServer" }), "WindowServer is missing")
 if processes.contains(where: { $0.path?.contains("ViewBridgeAuxiliary") == true }) {
     precondition(processes.contains(where: { $0.name == "ViewBridgeAuxiliary" }), "ViewBridgeAuxiliary is truncated or missing")

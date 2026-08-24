@@ -9,6 +9,7 @@ public struct ProcessSnapshot: Identifiable, Equatable, Sendable {
     public let userName: String
     public let virtualMemory: UInt64
     public let residentMemory: UInt64
+    public let memoryFootprint: UInt64
     public let threadCount: Int32
     public let startDate: Date?
     public let cpuTimeNanoseconds: UInt64
@@ -23,6 +24,7 @@ public struct ProcessSnapshot: Identifiable, Equatable, Sendable {
         userName: String = "root",
         virtualMemory: UInt64 = 0,
         residentMemory: UInt64 = 0,
+        memoryFootprint: UInt64 = 0,
         threadCount: Int32 = 0,
         startDate: Date? = nil,
         cpuTimeNanoseconds: UInt64 = 0,
@@ -36,6 +38,7 @@ public struct ProcessSnapshot: Identifiable, Equatable, Sendable {
         self.userName = userName
         self.virtualMemory = virtualMemory
         self.residentMemory = residentMemory
+        self.memoryFootprint = memoryFootprint
         self.threadCount = threadCount
         self.startDate = startDate
         self.cpuTimeNanoseconds = cpuTimeNanoseconds

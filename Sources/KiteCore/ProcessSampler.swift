@@ -26,6 +26,7 @@ public final class ProcessSampler: @unchecked Sendable {
                 parentID: process.parentID, userID: process.userID,
                 userName: process.userName,
                 virtualMemory: process.virtualMemory, residentMemory: process.residentMemory,
+                memoryFootprint: process.memoryFootprint,
                 threadCount: process.threadCount, startDate: process.startDate,
                 cpuTimeNanoseconds: process.cpuTimeNanoseconds,
                 cpuPercent: percent

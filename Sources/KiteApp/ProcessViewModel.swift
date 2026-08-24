@@ -94,7 +94,8 @@ final class ProcessViewModel: ObservableObject {
 
     var visibleProcesses: [ProcessSnapshot] {
         let needle = query.trimmingCharacters(in: .whitespacesAndNewlines)
-        let filtered = needle.isEmpty ? processes : processes.filter { process in
+        let candidates = processes.filter { $0.id != 0 }
+        let filtered = needle.isEmpty ? candidates : candidates.filter { process in
             process.name.localizedCaseInsensitiveContains(needle)
                 || process.path?.localizedCaseInsensitiveContains(needle) == true
                 || String(process.id).contains(needle)
@@ -165,9 +166,9 @@ final class ProcessViewModel: ObservableObject {
     }
 
     func treeRows(expandedPIDs: Set<Int32>, pinnedPIDs: [Int32]) -> [ProcessTreeRow] {
-        let processByID = Dictionary(uniqueKeysWithValues: processes.map { ($0.id, $0) })
+        let processByID = Dictionary(uniqueKeysWithValues: processes.filter { $0.id != 0 }.map { ($0.id, $0) })
         var children: [Int32: [ProcessSnapshot]] = [:]
-        for process in processes where process.parentID > 1 && process.parentID != process.id && processByID[process.parentID] != nil {
+        for process in processes where process.id != 0 && process.parentID > 1 && process.parentID != process.id && processByID[process.parentID] != nil {
             children[process.parentID, default: []].append(process)
         }
 
@@ -190,7 +191,7 @@ final class ProcessViewModel: ObservableObject {
         }
 
         let roots = processes.filter {
-            $0.id <= 1 || $0.parentID <= 1 || $0.parentID == $0.id || processByID[$0.parentID] == nil
+            $0.id != 0 && ($0.id <= 1 || $0.parentID <= 1 || $0.parentID == $0.id || processByID[$0.parentID] == nil)
         }.sorted(by: comesBefore)
         var rows: [ProcessTreeRow] = []
         var visited = Set<Int32>()
@@ -250,7 +251,7 @@ final class ProcessViewModel: ObservableObject {
         case .cpu:
             comparison = compare(lhs.cpuPercent, rhs.cpuPercent, lhs.id, rhs.id)
         case .memory:
-            comparison = compare(lhs.residentMemory, rhs.residentMemory, lhs.id, rhs.id)
+            comparison = compare(lhs.memoryFootprint, rhs.memoryFootprint, lhs.id, rhs.id)
         case .name:
             let nameComparison = lhs.name.localizedStandardCompare(rhs.name)
             comparison = nameComparison == .orderedSame ? compare(lhs.id, rhs.id, lhs.id, rhs.id) : nameComparison

@@ -23,13 +23,11 @@ public struct MacOSProcessProvider: ProcessProvider {
         }
         guard result > 0 else { throw ProcessProviderError.processListUnavailable }
 
-        var uniquePIDs = Set(pids.prefix(Int(result)).filter { $0 >= 0 })
-        uniquePIDs.insert(0)
-        let kernelResidentMemory = (try? MacOSMemoryProvider().snapshot().memoryUsed) ?? 0
-        return uniquePIDs.map { readProcess($0, kernelResidentMemory: kernelResidentMemory) }
+        let uniquePIDs = Set(pids.prefix(Int(result)).filter { $0 >= 0 })
+        return uniquePIDs.map { readProcess($0) }
     }
 
-    private func readProcess(_ pid: Int32, kernelResidentMemory: UInt64) -> ProcessSnapshot {
+    private func readProcess(_ pid: Int32) -> ProcessSnapshot {
         var bsdInfo = proc_bsdinfo()
         let bsdSize = Int32(MemoryLayout<proc_bsdinfo>.stride)
         let hasBSDInfo = pid > 0 && proc_pidinfo(pid, PROC_PIDTBSDINFO, 0, &bsdInfo, bsdSize) == bsdSize
@@ -41,6 +39,12 @@ public struct MacOSProcessProvider: ProcessProvider {
         var taskInfo = proc_taskinfo()
         let taskSize = Int32(MemoryLayout<proc_taskinfo>.stride)
         let hasTaskInfo = pid > 0 && proc_pidinfo(pid, PROC_PIDTASKINFO, 0, &taskInfo, taskSize) == taskSize
+        var usage = rusage_info_v4()
+        let hasUsage = withUnsafeMutablePointer(to: &usage) { pointer in
+            pointer.withMemoryRebound(to: rusage_info_t?.self, capacity: 1) {
+                proc_pid_rusage(pid, RUSAGE_INFO_V4, $0)
+            }
+        } == 0
         let discoveredName = processName(pid)
         let bsdName = hasBSDInfo ? cString(bsdInfo.pbi_name) : ""
         let shortName = hasShortInfo ? cString(shortInfo.pbsi_comm) : ""
@@ -60,7 +64,8 @@ public struct MacOSProcessProvider: ProcessProvider {
             userID: userID,
             userName: userName(for: userID),
             virtualMemory: hasTaskInfo ? taskInfo.pti_virtual_size : 0,
-            residentMemory: pid == 0 ? kernelResidentMemory : (hasTaskInfo ? taskInfo.pti_resident_size : 0),
+            residentMemory: hasTaskInfo ? taskInfo.pti_resident_size : 0,
+            memoryFootprint: hasUsage ? usage.ri_phys_footprint : 0,
             threadCount: hasTaskInfo ? taskInfo.pti_threadnum : 0,
             startDate: startDate,
             cpuTimeNanoseconds: hasTaskInfo ? taskInfo.pti_total_user &+ taskInfo.pti_total_system : 0,

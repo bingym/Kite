@@ -20,6 +20,8 @@ The process provider must retain every PID returned by `proc_listallpids`, even
 when macOS denies detailed information. Missing fields should degrade to safe
 defaults instead of removing the process. Process-control errors must be shown
 to the user because macOS permissions legitimately reject some signals.
+Process rows expose both resident size and macOS `phys_footprint`; the provider
+does not synthesize a `kernel_task` row from host-wide memory statistics.
 
 ## UI conventions
 
