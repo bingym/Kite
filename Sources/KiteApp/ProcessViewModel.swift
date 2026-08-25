@@ -46,10 +46,11 @@ actor ProcessService {
     private let sampler = ProcessSampler()
     private let memoryProvider = MacOSMemoryProvider()
     private let cpuSampler = MacOSCPUSampler()
+    private let portProvider = MacOSPortProvider()
     private let controller = MacOSProcessController()
 
-    func sample() throws -> ([ProcessSnapshot], MemorySnapshot, CPUSnapshot) {
-        (try sampler.sample(), try memoryProvider.snapshot(), try cpuSampler.sample())
+    func sample() throws -> ([ProcessSnapshot], MemorySnapshot, CPUSnapshot, [PortSnapshot]) {
+        (try sampler.sample(), try memoryProvider.snapshot(), try cpuSampler.sample(), try portProvider.snapshot())
     }
 
     func perform(_ action: ProcessAction, pid: Int32) throws {
@@ -85,6 +86,7 @@ final class ProcessViewModel: ObservableObject {
     @Published private(set) var cpu: CPUSnapshot?
     @Published private(set) var cpuHistory: [Double] = []
     @Published private(set) var memoryHistory: [Double] = []
+    @Published private(set) var ports: [PortSnapshot] = []
     @Published var selectedPID: Int32?
     @Published var query = ""
     @Published var sort = ProcessSort.cpu
@@ -134,6 +136,7 @@ final class ProcessViewModel: ObservableObject {
             processes = sample.0
             memory = sample.1
             cpu = sample.2
+            ports = sample.3
             pressureHistory.append(sample.1.pressure)
             cpuHistory.append(sample.2.totalPercent / 100)
             memoryHistory.append(sample.1.pressure)

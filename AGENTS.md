@@ -9,8 +9,9 @@ targets use the Kite name; do not reintroduce the former Swift-based names.
 
 ## Architecture
 
-- `Sources/KiteCore`: process enumeration, CPU sampling, process
-  signals, and host memory statistics. Keep this target independent of SwiftUI.
+- `Sources/KiteCore`: process enumeration, CPU sampling, network port
+  enumeration, process signals, and host memory statistics. Keep this target
+  independent of SwiftUI.
 - `Sources/KiteApp`: the English-language macOS GUI. Potentially
   blocking system calls belong behind `ProcessService`, not on the main actor.
 - `Sources/KiteCLI`: small command-line view of the process provider.
@@ -34,8 +35,13 @@ does not synthesize a `kernel_task` row from host-wide memory statistics.
   Keep the tree collapsed initially, preserve expanded rows across automatic refreshes, and reveal ancestor paths for
   search matches. Process context menus include task termination, force quit,
   Finder reveal, and child-first process-tree termination.
-- Keep Performance and Processes as peer navigation destinations. Performance
-  provides continuously sampled 60-second CPU and memory graphs and host stats.
+- Keep Performance, Processes, and Network as peer navigation destinations in
+  that order.
+  Performance provides continuously sampled 60-second CPU and memory graphs and
+  host stats. Network currently contains a single Port category listing every
+  local port in use with its owning process (PID and name), protocol, state,
+  local address, and remote endpoint; it is backed by the KiteCore port provider
+  built on `proc_pidfdinfo` socket inspection.
 - Use the shared Activity Monitor-style top bar for peer navigation; do not add
   a page sidebar. Pinned processes stay above the tree in the user's pin order
   across automatic refreshes until explicitly unpinned.

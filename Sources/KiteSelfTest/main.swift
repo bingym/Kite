@@ -21,4 +21,12 @@ let memory = try MacOSMemoryProvider().snapshot()
 precondition(memory.physicalMemory > 0, "Physical memory was not reported")
 precondition(memory.memoryUsed <= memory.physicalMemory, "Used memory exceeds physical memory")
 precondition((0...1).contains(memory.pressure), "Memory pressure is outside its normalized range")
-print("Self-test passed: \(processes.count) processes, \(memory.physicalMemory) bytes physical memory")
+
+let ports = try MacOSPortProvider().snapshot()
+precondition(ports.allSatisfy { $0.localPort >= 0 && $0.localPort <= 65535 }, "A port snapshot has an invalid local port")
+precondition(ports.allSatisfy { !$0.processName.isEmpty }, "A port snapshot has no process name")
+precondition(ports.allSatisfy { $0.remotePort == nil || $0.remotePort! <= 65535 }, "A port snapshot has an invalid remote port")
+print(
+    "Self-test passed: \(processes.count) processes, \(memory.physicalMemory) bytes physical memory, "
+        + "\(ports.count) local ports"
+)

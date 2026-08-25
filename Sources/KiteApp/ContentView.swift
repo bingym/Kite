@@ -6,8 +6,15 @@ struct ContentView: View {
     private enum Section: String, CaseIterable, Identifiable {
         case performance = "Performance"
         case processes = "Processes"
+        case network = "Network"
         var id: Self { self }
-        var icon: String { self == .performance ? "waveform.path.ecg" : "list.bullet.rectangle" }
+        var icon: String {
+            switch self {
+            case .performance: "waveform.path.ecg"
+            case .network: "network"
+            case .processes: "list.bullet.rectangle"
+            }
+        }
     }
 
     @StateObject private var model = ProcessViewModel()
@@ -55,7 +62,7 @@ struct ContentView: View {
             KiteMark().frame(width: 36, height: 36)
             VStack(alignment: .leading, spacing: 0) {
             Text("Kite").font(.headline)
-                Text(section == .processes ? "All Processes" : "System Performance")
+                Text(sectionSubtitle)
                     .font(.caption).foregroundStyle(.secondary)
             }
             .frame(width: 150, alignment: .leading)
@@ -66,7 +73,7 @@ struct ContentView: View {
             }
             .labelsHidden()
             .pickerStyle(.segmented)
-            .frame(width: 250)
+            .frame(width: 330)
             Spacer()
 
             HStack(spacing: 7) {
@@ -91,8 +98,18 @@ struct ContentView: View {
         switch section {
         case .performance:
             PerformanceView(model: model)
+        case .network:
+            NetworkView(model: model)
         case .processes:
             processesView
+        }
+    }
+
+    private var sectionSubtitle: String {
+        switch section {
+        case .performance: "System Performance"
+        case .network: "Local Network Ports"
+        case .processes: "All Processes"
         }
     }
 
