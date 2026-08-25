@@ -267,7 +267,7 @@ struct ContentView: View {
         case "PID": .pid
         case "CPU": .cpu
         case "Memory": .memory
-        case "Resident": .memory
+        case "Resident": .resident
         case "Threads": .threads
         case "User": .user
         default: nil

@@ -4,6 +4,7 @@ import KiteCore
 enum ProcessSort: String, CaseIterable, Identifiable {
     case cpu
     case memory
+    case resident
     case name
     case pid
     case threads
@@ -15,6 +16,7 @@ enum ProcessSort: String, CaseIterable, Identifiable {
         switch self {
         case .cpu: "CPU"
         case .memory: "Memory"
+        case .resident: "Resident"
         case .name: "Name"
         case .pid: "PID"
         case .threads: "Threads"
@@ -252,6 +254,8 @@ final class ProcessViewModel: ObservableObject {
             comparison = compare(lhs.cpuPercent, rhs.cpuPercent, lhs.id, rhs.id)
         case .memory:
             comparison = compare(lhs.memoryFootprint, rhs.memoryFootprint, lhs.id, rhs.id)
+        case .resident:
+            comparison = compare(lhs.residentMemory, rhs.residentMemory, lhs.id, rhs.id)
         case .name:
             let nameComparison = lhs.name.localizedStandardCompare(rhs.name)
             comparison = nameComparison == .orderedSame ? compare(lhs.id, rhs.id, lhs.id, rhs.id) : nameComparison
